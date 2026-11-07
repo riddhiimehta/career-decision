@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprehensive Job Offer & Relocation Decision Matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #090d16;
+    --bg-surface: #131b2e;
+    --bg-surface-hover: #1a243d;
+    --bg-card: rgba(26, 36, 62, 0.65);
+    
+    --accent-primary: #6366f1;
+    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+    --accent-glow: rgba(99, 102, 241, 0.25);
+    
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-accent: rgba(99, 102, 241, 0.3);
+    
+    --positive: #10b981;
+    --positive-glow: rgba(16, 185, 129, 0.15);
+    --negative: #f43f5e;
+    --negative-glow: rgba(244, 63, 94, 0.15);
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-base);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(217, 70, 239, 0.08) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    margin: 0;
+    padding: 24px 16px 48px 16px;
+    display: block;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 12px 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid var(--border-accent);
+    color: #a5b4fc;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.02em;
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p.subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 560px;
+    margin: 0 auto;
+    font-weight: 400;
+  }
+
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: var(--accent-gradient);
+    border-radius: 4px;
+  }
+
+  .factor-item {
+    background: rgba(19, 27, 46, 0.7);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+  }
+
+  .factor-item.disabled-factor {
+    opacity: 0.45;
+    filter: grayscale(0.5);
+    background: rgba(15, 20, 32, 0.4);
+  }
+
+  .factor-item:hover {
+    border-color: rgba(99, 102, 241, 0.25);
+  }
+
+  .factor-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .factor-label {
+    flex: 1;
+    padding-right: 12px;
+  }
+
+  .factor-label strong {
+    display: block;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .factor-label span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(9, 13, 22, 0.5);
+    padding: 6px 10px;
+    border-radius: 9999px;
+    border: 1px solid var(--border-subtle);
+    white-space: nowrap;
+  }
+
+  .toggle-container label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #334155;
+    transition: .3s;
+    border-radius: 20px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background: var(--accent-gradient);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(16px);
+  }
+
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 14px;
+    background: rgba(9, 13, 22, 0.4);
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  @media (min-width: 640px) {
+    .controls-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+  }
+
+  .control-group label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  select {
+    width: 100%;
+    background: var(--bg-surface);
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  select:focus {
+    border-color: var(--accent-primary);
+  }
+
+  .range-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #1e293b;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent-glow);
+    transition: transform 0.1s, background 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+
+  .range-val {
+    font-weight: 800;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #fff;
+  }
+
+  .btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    margin-bottom: 14px;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-accent);
+    color: #fff;
+    transform: none;
+  }
+
+  .results-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-accent);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    display: none;
+    margin-top: 32px;
+    margin-bottom: 48px;
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .results-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .result-box {
+    background: rgba(9, 13, 22, 0.6);
+    padding: 20px;
+    border-radius: 14px;
+    text-align: center;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .result-box h3 {
+    margin: 0 0 6px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .result-score {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+
+  .winner-banner {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: 800;
+    border: 1px solid transparent;
+  }
+
+  .winner-banner.new {
+    background: var(--positive-glow);
+    color: var(--positive);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .winner-banner.current {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border-color: var(--border-accent);
+  }
+
+  .category-breakdown {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 640px) {
+    .category-breakdown {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .cat-pill {
+    background: rgba(9, 13, 22, 0.5);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cat-pill strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .cat-pill span {
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--negative);
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .delete-btn:hover {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="badge">Career & Relocation Granular Matrix</div>
+    <h1>Job Offer Decision Matrix</h1>
+    <p class="subtitle">Set factor importance weights (1–5) and rate options (-5 to +5). Toggle specific factors on/off to see how key variables influence your decision.</p>
+  </header>
+
+  <form id="matrixForm">
+    <div id="categoriesContainer"></div>
+
+    <button type="button" class="btn btn-secondary" onclick="addCustomFactorPrompt()">+ Add Custom Factor</button>
+    <button type="button" class="btn" onclick="calculateResults()">Calculate Decision Analysis</button>
+  </form>
+
+  <div class="card results-card" id="resultsCard">
+    <div class="section-title">Final Decision Analysis</div>
+    <div class="results-grid">
+      <div class="result-box">
+        <h3>Stay at Current Job</h3>
+        <div class="result-score" id="scoreCurrent">0</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; font-weight: 500;">Weighted Total Score</div>
+      </div>
+      <div class="result-box">
+        <h3>Accept New Offer</h3>
+        <div class="result-score" id="scoreNew">0</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; font-weight: 500;">Weighted Total Score</div>
+      </div>
+    </div>
+    
+    <div id="winnerBanner" class="winner-banner"></div>
+    <div class="category-breakdown" id="categoryBreakdownResults"></div>
+    <button type="button" class="btn btn-secondary" style="margin-top: 20px;" onclick="window.print()">Export Summary / Save PDF</button>
+  </div>
+</div>
+
+<script>
+  let categories = [
+    {
+      id: 'personal',
+      name: '1. Personal, Relationships & Life Satisfaction',
+      factors: [
+        { id: 'gf', name: 'Proximity to Girlfriend', desc: 'Living in the same city vs. long-distance separation.', weight: 5, current: -4, newVal: 5, active: true },
+        { id: 'reloc_desire', name: 'Inner Desire to Move Cities', desc: 'Personal enthusiasm and excitement for relocating to a new city environment.', weight: 4, current: -2, newVal: 4, active: true },
+        { id: 'reloc_press', name: 'Relocation & Relationship Pressure', desc: 'Stress of transitioning cities and cohabitation/living arrangements simultaneously.', weight: 3, current: 2, newVal: -3, active: true },
+        { id: 'support_network', name: 'Local Support System & Social Circle', desc: 'Presence of close friends, family, and social network in the city.', weight: 3, current: 3, newVal: -2, active: true },
+        { id: 'fresh', name: 'Fresh Start & Social Reset', desc: 'Opportunity to build a new personal image and exit a stale environment.', weight: 3, current: -2, newVal: 4, active: true }
+      ]
+    },
+    {
+      id: 'current_workplace',
+      name: '2. Current Workplace Sentiment & Internal Standing',
+      factors: [
+        { id: 'current_feel', name: 'Current Role Fulfillment & Joy', desc: 'How valued, motivated, and engaged you feel in your current day-to-day work.', weight: 4, current: -4, newVal: 2, active: true },
+        { id: 'current_standing', name: 'Importance & Standing at Current Firm', desc: 'Your recognized value, trust, and reputation within the current team.', weight: 4, current: 4, newVal: -1, active: true },
+        { id: 'toxic', name: 'Toxicity & Management Friction', desc: 'Negative workplace dynamics, office politics, or unsupportive leadership.', weight: 5, current: -5, newVal: 1, active: true },
+        { id: 'growth_cap', name: 'Current Growth Ceiling', desc: 'Likelihood of promotion, title bump, or meaningful raise if you stay.', weight: 3, current: -3, newVal: 2, active: true }
+      ]
+    },
+    {
+      id: 'new_role_culture',
+      name: '3. Work Environment, Culture & Lifestyle Flexibility',
+      factors: [
+        { id: 'brutal_culture', name: 'Work Intensity & Brutal Culture', desc: 'High-pressure environment, long hours, and risk of rapid compound burnout.', weight: 5, current: 2, newVal: -4, active: true },
+        { id: 'wfh', name: 'Flexibility & WFH Loss', desc: '0 WFH days vs. schedule autonomy/remote working flexibility.', weight: 4, current: 3, newVal: -4, active: true },
+        { id: 'commute', name: 'Daily Commute Burden', desc: 'Unpaid travel time weekly resulting from zero remote work days.', weight: 3, current: 3, newVal: -3, active: true }
+      ]
+    },
+    {
+      id: 'financial',
+      name: '4. Financial & Economic Realities',
+      factors: [
+        { id: 'pay', name: 'Base Pay & Gross Raise', desc: 'Direct salary increase, bonuses, and total compensation package.', weight: 4, current: 1, newVal: 4, active: true },
+        { id: 'net_income', name: 'Net Disposable Income', desc: 'Accounting for city cost of living, rent inflation, taxes, and out-of-pocket moving costs.', weight: 4, current: 2, newVal: -1, active: true }
+      ]
+    },
+    {
+      id: 'career',
+      name: '5. Career Trajectory & Scope',
+      factors: [
+        { id: 'level', name: 'Title Level Shift (L3 to L2)', desc: 'Perception of stepping down a tier vs. enterprise scale positioning.', weight: 3, current: 3, newVal: -1, active: true },
+        { id: 'scope', name: 'Breadth of Skill Expansion', desc: 'Expanding technical scope, learning curve, and transferable skills.', weight: 4, current: 1, newVal: 4, active: true },
+        { id: 'brand', name: 'Resume Prestige & Exit Options', desc: 'Long-term career door-opening power of the new firm’s brand name.', weight: 3, current: 1, newVal: 3, active: true }
+      ]
+    }
+  ];
+
+  function renderForm() {
+    const container = document.getElementById('categoriesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    categories.forEach(cat => {
+      let cardHTML = `
+        <div class="card">
+          <div class="section-title">${cat.name}</div>
+      `;
+
+      cat.factors.forEach(f => {
+        const isDisabled = f.active === false;
+        cardHTML += `
+          <div class="factor-item ${isDisabled ? 'disabled-factor' : ''}" id="factor-${f.id}">
+            <div class="factor-header-row">
+              <div class="factor-label">
+                <strong>${f.name}</strong>
+                <span>${f.desc}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="toggle-container">
+                  <label for="toggle-${f.id}">${f.active ? 'Active' : 'Off'}</label>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-${f.id}" ${f.active ? 'checked' : ''} onchange="toggleFactor('${cat.id}', '${f.id}', this.checked)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                ${f.isCustom ? `<button type="button" class="delete-btn" onclick="deleteFactor('${cat.id}', '${f.id}')" title="Remove Factor">&times;</button>` : ''}
+              </div>
+            </div>
+            
+            <div class="controls-grid" style="${isDisabled ? 'pointer-events: none; opacity: 0.5;' : ''}">
+              <div class="control-group">
+                <label>Importance</label>
+                <select onchange="updateVal('${cat.id}', '${f.id}', 'weight', this.value)" ${isDisabled ? 'disabled' : ''}>
+                  <option value="1" ${f.weight == 1 ? 'selected' : ''}>1 - Low</option>
+                  <option value="2" ${f.weight == 2 ? 'selected' : ''}>2 - Moderate</option>
+                  <option value="3" ${f.weight == 3 ? 'selected' : ''}>3 - Important</option>
+                  <option value="4" ${f.weight == 4 ? 'selected' : ''}>4 - High</option>
+                  <option value="5" ${f.weight == 5 ? 'selected' : ''}>5 - Critical</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label>Current Role <span>(-5 to +5)</span></label>
+                <div class="range-container">
+                  <input type="range" min="-5" max="5" value="${f.current}" ${isDisabled ? 'disabled' : ''} oninput="updateVal('${cat.id}', '${f.id}', 'current', this.value); document.getElementById('cur-val-${f.id}').innerText = this.value;">
+                  <span class="range-val" id="cur-val-${f.id}">${f.current}</span>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label>New Offer <span>(-5 to +5)</span></label>
+                <div class="range-container">
+                  <input type="range" min="-5" max="5" value="${f.newVal}" ${isDisabled ? 'disabled' : ''} oninput="updateVal('${cat.id}', '${f.id}', 'newVal', this.value); document.getElementById('new-val-${f.id}').innerText = this.value;">
+                  <span class="range-val" id="new-val-${f.id}">${f.newVal}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      cardHTML += `</div>`;
+      container.innerHTML += cardHTML;
+    });
+  }
+
+  function toggleFactor(catId, factorId, isChecked) {
+    const cat = categories.find(c => c.id === catId);
+    if (!cat) return;
+    const factor = cat.factors.find(f => f.id === factorId);
+    if (factor) {
+      factor.active = isChecked;
+      renderForm();
+      if (document.getElementById('resultsCard').style.display === 'block') {
+        calculateResults();
+      }
+    }
+  }
+
+  function updateVal(catId, factorId, field, val) {
+    const cat = categories.find(c => c.id === catId);
+    if (!cat) return;
+    const factor = cat.factors.find(f => f.id === factorId);
+    if (factor) {
+      factor[field] = parseFloat(val);
+    }
+  }
+
+  function addCustomFactorPrompt() {
+    const name = prompt("Enter custom consideration name:");
+    if (!name) return;
+    const desc = prompt("Enter short description:") || "";
+    
+    const newFactor = {
+      id: 'custom_' + Date.now(),
+      name: name,
+      desc: desc,
+      weight: 3,
+      current: 0,
+      newVal: 0,
+      active: true,
+      isCustom: true
+    };
+
+    categories[0].factors.push(newFactor);
+    renderForm();
+  }
+
+  function deleteFactor(catId, factorId) {
+    const cat = categories.find(c => c.id === catId);
+    if (cat) {
+      cat.factors = cat.factors.filter(f => f.id !== factorId);
+      renderForm();
+    }
+  }
+
+  function calculateResults() {
+    let totalCurrent = 0;
+    let totalNew = 0;
+    let categoryBreakdownHTML = '';
+
+    categories.forEach(cat => {
+      let catCurrent = 0;
+      let catNew = 0;
+
+      cat.factors.forEach(f => {
+        if (f.active !== false) {
+          catCurrent += f.weight * f.current;
+          catNew += f.weight * f.newVal;
+        }
+      });
+
+      totalCurrent += catCurrent;
+      totalNew += catNew;
+
+      let catDiff = catNew - catCurrent;
+      let catStatus = catDiff > 0 
+        ? `<span style="color:var(--positive);">New Offer (+${catDiff})</span>` 
+        : catDiff < 0 
+        ? `<span style="color:#a5b4fc;">Current (+${Math.abs(catDiff)})</span>` 
+        : `<span style="color:var(--text-muted);">Tied</span>`;
+        
+      categoryBreakdownHTML += `
+        <div class="cat-pill">
+          <strong>${cat.name.replace(/^\d+\.\s*/, '')}</strong>
+          ${catStatus}
+        </div>
+      `;
+    });
+
+    document.getElementById('scoreCurrent').innerText = totalCurrent;
+    document.getElementById('scoreNew').innerText = totalNew;
+
+    const winnerBanner = document.getElementById('winnerBanner');
+    const diff = Math.abs(totalNew - totalCurrent);
+
+    if (totalNew > totalCurrent) {
+      winnerBanner.className = "winner-banner new";
+      winnerBanner.innerHTML = `RECOMMENDATION: ACCEPT NEW OFFER<br><span style="font-size:0.85rem; font-weight:normal;">New offer leads by a margin of +${diff} weighted points.</span>`;
+    } else if (totalCurrent > totalNew) {
+      winnerBanner.className = "winner-banner current";
+      winnerBanner.innerHTML = `RECOMMENDATION: STAY AT CURRENT JOB<br><span style="font-size:0.85rem; font-weight:normal;">Staying leads by a margin of +${diff} weighted points.</span>`;
+    } else {
+      winnerBanner.className = "winner-banner";
+      winnerBanner.style.borderColor = "var(--border-subtle)";
+      winnerBanner.innerHTML = `IT'S AN EXACT TIE!<br><span style="font-size:0.85rem; font-weight:normal;">Review factor weights and adjust ratings to break the tie.</span>`;
+    }
+
+    document.getElementById('categoryBreakdownResults').innerHTML = categoryBreakdownHTML;
+    
+    const resultsCard = document.getElementById('resultsCard');
+    resultsCard.style.display = 'block';
+    resultsCard.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderForm);
+  } else {
+    renderForm();
+  }
+</script>
+
+</body>
+</html>
