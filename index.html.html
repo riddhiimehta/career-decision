@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Move & Relocation Decision Matrix</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Font Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            50: '#eep2ff',
+            500: '#6366f1',
+            600: '#4f46e5',
+            700: '#4338ca',
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  /* Custom scrollbar for dark UI */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #6366f1;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(99, 102, 241, 0.5);
+  }
+
+  @media print {
+    body {
+      background-color: white !important;
+      color: black !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .print-only {
+      display: block !important;
+    }
+  }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen antialiased selection:bg-indigo-500 selection:text-white pb-16">
+
+  <!-- Main Container -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+    <!-- Header Section -->
+    <header class="mb-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center border-b border-slate-800 pb-6 gap-4">
+      <div>
+        <div class="flex items-center justify-center sm:justify-start gap-3">
+          <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+            <i class="fa-solid fa-compass-drafting text-2xl"></i>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Career Move Decision Matrix</h1>
+        </div>
+        <p class="text-slate-400 text-sm mt-1">Weighted trade-off analysis for evaluating job offers, relocation, and lifestyle impact.</p>
+      </div>
+
+      <div class="flex items-center gap-3 no-print">
+        <button onclick="resetToDefaults()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition border border-slate-700 flex items-center gap-2">
+          <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+        </button>
+        <button onclick="window.print()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-file-pdf"></i> Export Summary
+        </button>
+      </div>
+    </header>
+
+    <!-- Real-time Score Banner / Dashboard -->
+    <div class="sticky top-4 z-30 mb-8 bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-800 p-4 sm:p-6 shadow-2xl">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        <!-- Current Job Summary -->
+        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 text-center relative overflow-hidden">
+          <div class="text-xs uppercase font-semibold text-slate-400 tracking-wider mb-1">Stay at Current Job</div>
+          <div id="scoreCurrent" class="text-3xl font-extrabold text-slate-200">0</div>
+          <div class="text-[11px] text-slate-500 mt-1">Weighted total points</div>
+        </div>
+
+        <!-- Vs Badge & Verdict -->
+        <div class="text-center">
+          <div id="verdictBadge" class="inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border transition-all duration-300 bg-slate-800 text-slate-400 border-slate-700">
+            Calculating...
+          </div>
+          <div id="verdictMargin" class="text-xs text-slate-400 font-medium">Adjust rates below to see analysis</div>
+        </div>
+
+        <!-- New Offer Summary -->
+        <div class="bg-indigo-950/40 p-4 rounded-xl border border-indigo-900/50 text-center relative overflow-hidden">
+          <div class="text-xs uppercase font-semibold text-indigo-300 tracking-wider mb-1">Accept New Offer</div>
+          <div id="scoreNew" class="text-3xl font-extrabold text-indigo-400">0</div>
+          <div class="text-[11px] text-indigo-300/70 mt-1">Weighted total points</div>
+        </div>
+      </div>
+
+      <!-- Quick Category Preference Bar -->
+      <div class="mt-4 pt-4 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+        <div id="catFav-1" class="p-1.5 rounded bg-slate-950/40 border border-slate-800 text-slate-400">Personal: --</div>
+        <div id="catFav-2" class="p-1.5 rounded bg-slate-950/40 border border-slate-800 text-slate-400">Financials: --</div>
+        <div id="catFav-3" class="p-1.5 rounded bg-slate-950/40 border border-slate-800 text-slate-400">Culture: --</div>
+        <div id="catFav-4" class="p-1.5 rounded bg-slate-950/40 border border-slate-800 text-slate-400">Career: --</div>
+      </div>
+    </div>
+
+    <!-- Rating Instructions -->
+    <div class="bg-slate-900/50 rounded-xl p-4 mb-8 border border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-circle-info text-indigo-400 text-lg"></i>
+        <span><strong>Scoring Guide:</strong> Importance Weight (1 = Low to 5 = Critical). Role Satisfaction (-5 = Highly Negative impact, 0 = Neutral, +5 = Exceptional positive).</span>
+      </div>
+      <div class="flex items-center gap-4 shrink-0 font-medium">
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> -5 (Bad)</span>
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> 0 (Neutral)</span>
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> +5 (Great)</span>
+      </div>
+    </div>
+
+    <!-- Main Categories Accordion/Form -->
+    <div id="categoriesContainer" class="space-y-6">
+      <!-- Dynamic rendering via JavaScript -->
+    </div>
+
+    <!-- Add Custom Category Section -->
+    <div class="mt-6 p-4 rounded-xl bg-slate-900/40 border border-dashed border-slate-800 flex justify-center no-print">
+      <button onclick="promptNewCategory()" class="text-xs font-semibold text-slate-400 hover:text-indigo-400 transition flex items-center gap-2">
+        <i class="fa-solid fa-folder-plus text-sm"></i> Add Custom Category
+      </button>
+    </div>
+
+    <!-- Detailed Analysis & Recommendation Breakdowns -->
+    <section class="mt-12 bg-slate-900 rounded-2xl border border-slate-800 p-6 sm:p-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-chart-pie text-indigo-400"></i> Category Breakdown & Insights
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="categoryBreakdownGrid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Strategic Action Plan -->
+      <div class="mt-8 pt-6 border-t border-slate-800">
+        <h3 class="text-base font-semibold text-slate-200 mb-3">Suggested Next Steps & Decision Guidance</h3>
+        <div id="strategicGuidance" class="text-sm text-slate-400 leading-relaxed space-y-2">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-600 pb-8 no-print">
+      Interactive Decision Matrix &bull; Self-contained analysis tool built for career transitions.
+    </footer>
+
+  </div>
+
+<script>
+  // Initial default dataset containing all requested factors + prefilled values matching the situation
+  const initialData = [
+    {
+      id: "cat-1",
+      title: "1. Personal & Lifestyle",
+      icon: "fa-heart",
+      factors: [
+        {
+          id: "f-1",
+          name: "Proximity to Girlfriend",
+          desc: "Relocating to live in the same city vs long distance relationship burden.",
+          weight: 5,
+          currentScore: -4,
+          newScore: 5
+        },
+        {
+          id: "f-2",
+          name: "Flexibility & WFH Options",
+          desc: "0 WFH days requirement at new role vs existing remote schedule tolerance.",
+          weight: 4,
+          currentScore: 3,
+          newScore: -4
+        },
+        {
+          id: "f-3",
+          name: "Fresh Start & Social Reset",
+          desc: "Opportunity to build a new personal image and exit a stale environment.",
+          weight: 3,
+          currentScore: -2,
+          newScore: 4
+        },
+        {
+          id: "f-4",
+          name: "Daily Commute Burden",
+          desc: "Physical daily commute fatigue with zero remote working cushion.",
+          weight: 4,
+          currentScore: 3,
+          newScore: -3
+        },
+        {
+          id: "f-5",
+          name: "Relationship & Living Stress",
+          desc: "Stress of co-adjusting to a new city while adapting to demanding workload.",
+          weight: 3,
+          currentScore: 1,
+          newScore: -2
+        }
+      ]
+    },
+    {
+      id: "cat-2",
+      title: "2. Financials & Compensation",
+      icon: "fa-sack-dollar",
+      factors: [
+        {
+          id: "f-6",
+          name: "Base Pay & Total Rewards",
+          desc: "Gross base salary raise, performance bonuses, and total compensation package.",
+          weight: 4,
+          currentScore: 1,
+          newScore: 4
+        },
+        {
+          id: "f-7",
+          name: "Net Disposable Income",
+          desc: "Actual take-home savings adjusted for rent, state/local taxes, & living costs.",
+          weight: 4,
+          currentScore: 2,
+          newScore: 1
+        },
+        {
+          id: "f-8",
+          name: "Relocation Costs & Stipends",
+          desc: "Upfront out-of-pocket moving costs vs company relocation assistance.",
+          weight: 2,
+          currentScore: 3,
+          newScore: -1
+        }
+      ]
+    },
+    {
+      id: "cat-3",
+      title: "3. Work Culture & Well-Being",
+      icon: "fa-shield-heart",
+      factors: [
+        {
+          id: "f-9",
+          name: "Escaping Current Job Toxicity",
+          desc: "Leaving the increasingly toxic atmosphere at the current employer.",
+          weight: 5,
+          currentScore: -4,
+          newScore: 3
+        },
+        {
+          id: "f-10",
+          name: "Work Intensity & Hours",
+          desc: "Known brutal work ethic, long working hours, and high expectation pressure.",
+          weight: 5,
+          currentScore: 2,
+          newScore: -4
+        },
+        {
+          id: "f-11",
+          name: "Compound Burnout Risk",
+          desc: "Transitioning straight from toxic job into high-intensity without recovery gap.",
+          weight: 4,
+          currentScore: 0,
+          newScore: -3
+        },
+        {
+          id: "f-12",
+          name: "Pace vs Abuse Distinction",
+          desc: "High performance standard (rigorous) vs abusive & non-tolerant management.",
+          weight: 4,
+          currentScore: 1,
+          newScore: -2
+        }
+      ]
+    },
+    {
+      id: "cat-4",
+      title: "4. Career Growth & Strategic Value",
+      icon: "fa-chart-line",
+      factors: [
+        {
+          id: "f-13",
+          name: "Role & Title Level (L3 to L2)",
+          desc: "Perception of step-down in official rank (L3 -> L2) vs speed of promotion.",
+          weight: 3,
+          currentScore: 2,
+          newScore: -1
+        },
+        {
+          id: "f-14",
+          name: "Breadth of Skill Expansion",
+          desc: "Exposure to wider domain knowledge, new technologies, and broader scope.",
+          weight: 4,
+          currentScore: 1,
+          newScore: 4
+        },
+        {
+          id: "f-15",
+          name: "Resume Brand & Exit Doors",
+          desc: "Company prestige and long-term marketability acceleration for future jobs.",
+          weight: 4,
+          currentScore: 0,
+          newScore: 3
+        },
+        {
+          id: "f-16",
+          name: "Third Option Leverage",
+          desc: "Ability to stay short-term in tolerant job while continuing to shop for better fit.",
+          weight: 4,
+          currentScore: 3,
+          newScore: -3
+        }
+      ]
+    }
+  ];
+
+  let appData = JSON.parse(JSON.stringify(initialData));
+
+  // Initialize page
+  window.addEventListener('DOMContentLoaded', () => {
+    renderApp();
+  });
+
+  function renderApp() {
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+
+    appData.forEach((category, catIdx) => {
+      const catCard = document.createElement('div');
+      catCard.className = 'bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-lg';
+
+      // Category Header
+      let categoryHeaderHtml = `
+        <div class="bg-slate-850 p-5 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-slate-800 text-indigo-400 rounded-lg">
+              <i class="fa-solid ${category.icon || 'fa-folder'}"></i>
+            </div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-100">${category.title}</h2>
+          </div>
+          <button onclick="promptAddFactor('${category.id}')" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1.5 bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20 transition no-print">
+            <i class="fa-solid fa-plus"></i> Add Factor
+          </button>
+        </div>
+      `;
+
+      // Factors List
+      let factorsHtml = `<div class="divide-y divide-slate-800/60">`;
+
+      category.factors.forEach((factor, fIdx) => {
+        const curScoreVal = factor.currentScore;
+        const newScoreVal = factor.newScore;
+
+        factorsHtml += `
+          <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center hover:bg-slate-850/40 transition">
+            <!-- Factor Details -->
+            <div class="lg:col-span-4">
+              <div class="flex items-start justify-between">
+                <span class="font-semibold text-sm text-slate-200">${factor.name}</span>
+                <button onclick="removeFactor('${category.id}', '${factor.id}')" class="text-slate-600 hover:text-red-400 text-xs ml-2 no-print" title="Remove factor">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5 leading-normal">${factor.desc}</p>
+            </div>
+
+            <!-- Importance Weight -->
+            <div class="lg:col-span-2 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="text-slate-400 font-medium">Importance</span>
+                <span class="font-bold text-indigo-400" id="weightVal-${factor.id}">${factor.weight}/5</span>
+              </div>
+              <input type="range" min="1" max="5" value="${factor.weight}" 
+                oninput="updateWeight('${category.id}', '${factor.id}', this.value)"
+                class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- Current Job Rating (-5 to +5) -->
+            <div class="lg:col-span-3 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="text-slate-400 font-medium">Current Job</span>
+                <span class="font-bold ${getScoreColorClass(curScoreVal)}" id="curVal-${factor.id}">
+                  ${curScoreVal > 0 ? '+' : ''}${curScoreVal}
+                </span>
+              </div>
+              <input type="range" min="-5" max="5" value="${curScoreVal}" 
+                oninput="updateScore('${category.id}', '${factor.id}', 'currentScore', this.value)"
+                class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <!-- New Offer Rating (-5 to +5) -->
+            <div class="lg:col-span-3 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/80">
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="text-indigo-300 font-medium">New Offer</span>
+                <span class="font-bold ${getScoreColorClass(newScoreVal)}" id="newVal-${factor.id}">
+                  ${newScoreVal > 0 ? '+' : ''}${newScoreVal}
+                </span>
+              </div>
+              <input type="range" min="-5" max="5" value="${newScoreVal}" 
+                oninput="updateScore('${category.id}', '${factor.id}', 'newScore', this.value)"
+                class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+          </div>
+        `;
+      });
+
+      factorsHtml += `</div>`;
+      catCard.innerHTML = categoryHeaderHtml + factorsHtml;
+      container.appendChild(catCard);
+    });
+
+    calculateResults();
+  }
+
+  function getScoreColorClass(val) {
+    val = parseInt(val);
+    if (val > 0) return 'text-emerald-400';
+    if (val < 0) return 'text-red-400';
+    return 'text-slate-400';
+  }
+
+  function updateWeight(catId, factorId, val) {
+    val = parseInt(val);
+    const cat = appData.find(c => c.id === catId);
+    if (!cat) return;
+    const factor = cat.factors.find(f => f.id === factorId);
+    if (factor) {
+      factor.weight = val;
+      document.getElementById(`weightVal-${factorId}`).innerText = `${val}/5`;
+      calculateResults();
+    }
+  }
+
+  function updateScore(catId, factorId, scoreType, val) {
+    val = parseInt(val);
+    const cat = appData.find(c => c.id === catId);
+    if (!cat) return;
+    const factor = cat.factors.find(f => f.id === factorId);
+    if (factor) {
+      factor[scoreType] = val;
+      const targetId = scoreType === 'currentScore' ? `curVal-${factorId}` : `newVal-${factorId}`;
+      const elem = document.getElementById(targetId);
+      if (elem) {
+        elem.innerText = (val > 0 ? '+' : '') + val;
+        elem.className = `font-bold ${getScoreColorClass(val)}`;
+      }
+      calculateResults();
+    }
+  }
+
+  function calculateResults() {
+    let totalCurrent = 0;
+    let totalNew = 0;
+
+    const catBreakdowns = [];
+
+    appData.forEach((category, idx) => {
+      let catCurrent = 0;
+      let catNew = 0;
+
+      category.factors.forEach(f => {
+        catCurrent += f.weight * f.currentScore;
+        catNew += f.weight * f.newScore;
+      });
+
+      totalCurrent += catCurrent;
+      totalNew += catNew;
+
+      catBreakdowns.push({
+        id: category.id,
+        title: category.title,
+        currentScore: catCurrent,
+        newScore: catNew,
+        diff: catNew - catCurrent
+      });
+
+      // Update Header Quick Preference Indicators
+      const catFavElem = document.getElementById(`catFav-${idx + 1}`);
+      if (catFavElem) {
+        const shortName = category.title.split('.')[1] || category.title;
+        if (catNew > catCurrent) {
+          catFavElem.innerText = `${shortName.trim()}: New Offer (+${catNew - catCurrent})`;
+          catFavElem.className = "p-1.5 rounded bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 font-semibold";
+        } else if (catCurrent > catNew) {
+          catFavElem.innerText = `${shortName.trim()}: Current (+${catCurrent - catNew})`;
+          catFavElem.className = "p-1.5 rounded bg-indigo-950/40 border border-indigo-800/60 text-indigo-300 font-semibold";
+        } else {
+          catFavElem.innerText = `${shortName.trim()}: Tied`;
+          catFavElem.className = "p-1.5 rounded bg-slate-950/40 border border-slate-800 text-slate-400";
+        }
+      }
+    });
+
+    // Update Totals
+    document.getElementById('scoreCurrent').innerText = totalCurrent;
+    document.getElementById('scoreNew').innerText = totalNew;
+
+    // Update Winner Verdict Badge
+    const badge = document.getElementById('verdictBadge');
+    const marginText = document.getElementById('verdictMargin');
+
+    const diff = Math.abs(totalNew - totalCurrent);
+
+    if (totalNew > totalCurrent) {
+      badge.innerText = `Recommendation: Accept New Offer`;
+      badge.className = `inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border transition-all duration-300 bg-emerald-500/20 text-emerald-300 border-emerald-500/40`;
+      marginText.innerText = `New Offer leads by a margin of +${diff} weighted points`;
+    } else if (totalCurrent > totalNew) {
+      badge.innerText = `Recommendation: Stay at Current Job`;
+      badge.className = `inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border transition-all duration-300 bg-amber-500/20 text-amber-300 border-amber-500/40`;
+      marginText.innerText = `Staying leads by a margin of +${diff} weighted points`;
+    } else {
+      badge.innerText = `Decision Tied`;
+      badge.className = `inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 border transition-all duration-300 bg-slate-800 text-slate-300 border-slate-700`;
+      marginText.innerText = `Both options score identically. Adjust weights to break tie.`;
+    }
+
+    renderCategoryBreakdownGrid(catBreakdowns, totalCurrent, totalNew);
+  }
+
+  function renderCategoryBreakdownGrid(breakdowns, totalCurrent, totalNew) {
+    const container = document.getElementById('categoryBreakdownGrid');
+    container.innerHTML = '';
+
+    breakdowns.forEach(item => {
+      const isNewFavored = item.newScore > item.currentScore;
+      const isTie = item.newScore === item.currentScore;
+
+      const card = document.createElement('div');
+      card.className = "bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 flex flex-col justify-between";
+
+      card.innerHTML = `
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-semibold text-slate-200 text-sm">${item.title}</span>
+            <span class="text-xs px-2 py-0.5 rounded font-medium ${isTie ? 'bg-slate-800 text-slate-400' : isNewFavored ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/50' : 'bg-indigo-950 text-indigo-300 border border-indigo-800/50'}">
+              ${isTie ? 'Tied' : isNewFavored ? 'Favors New Offer' : 'Favors Current'}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs mt-3">
+            <div class="bg-slate-900 p-2 rounded border border-slate-800">
+              <span class="text-slate-400 block text-[10px]">Current Job</span>
+              <span class="font-bold text-slate-200 text-sm">${item.currentScore} pts</span>
+            </div>
+            <div class="bg-slate-900 p-2 rounded border border-slate-800">
+              <span class="text-indigo-300 block text-[10px]">New Offer</span>
+              <span class="font-bold text-indigo-400 text-sm">${item.newScore} pts</span>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    // Strategic Guidance Text
+    const guidanceElem = document.getElementById('strategicGuidance');
+    let guidanceHtml = '';
+
+    if (totalNew > totalCurrent) {
+      guidanceHtml = `
+        <p><i class="fa-solid fa-check text-emerald-400 mr-1.5"></i> <strong>Key Driver:</strong> The move is primarily justified by living in the same city as his girlfriend, escaping a toxic team environment, and broader knowledge expansion.</p>
+        <p><i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1.5"></i> <strong>Risk Mitigation Required:</strong> With 0 WFH days and a high-intensity culture, he should negotiate a 2-3 week break between jobs to avoid immediate compound burnout.</p>
+      `;
+    } else {
+      guidanceHtml = `
+        <p><i class="fa-solid fa-hand text-amber-400 mr-1.5"></i> <strong>Key Driver:</strong> Staying at the current job preserves lifestyle balance (WFH days, lower stress culture) and protects against the L3 to L2 title demotion.</p>
+        <p><i class="fa-solid fa-lightbulb text-indigo-400 mr-1.5"></i> <strong>Actionable Strategy:</strong> Since the current job is getting toxic, he can leverage its higher work tolerance to comfortably interview for a "Third Option" offering both good location and culture.</p>
+      `;
+    }
+    guidanceElem.innerHTML = guidanceHtml;
+  }
+
+  function promptAddFactor(catId) {
+    const name = prompt("Enter factor name (e.g., 'Health Insurance Coverage'):");
+    if (!name) return;
+    const desc = prompt("Enter brief description of this factor:") || "";
+
+    const cat = appData.find(c => c.id === catId);
+    if (cat) {
+      cat.factors.push({
+        id: 'f-' + Date.now(),
+        name: name,
+        desc: desc,
+        weight: 3,
+        currentScore: 0,
+        newScore: 0
+      });
+      renderApp();
+    }
+  }
+
+  function removeFactor(catId, factorId) {
+    const cat = appData.find(c => c.id === catId);
+    if (cat) {
+      cat.factors = cat.factors.filter(f => f.id !== factorId);
+      renderApp();
+    }
+  }
+
+  function promptNewCategory() {
+    const title = prompt("Enter Category Title (e.g., '5. Long-term Wealth & Equity'):");
+    if (!title) return;
+
+    appData.push({
+      id: 'cat-' + Date.now(),
+      title: title,
+      icon: 'fa-folder-open',
+      factors: []
+    });
+    renderApp();
+  }
+
+  function resetToDefaults() {
+    appData = JSON.parse(JSON.stringify(initialData));
+    renderApp();
+  }
+</script>
+
+</body>
+</html>
